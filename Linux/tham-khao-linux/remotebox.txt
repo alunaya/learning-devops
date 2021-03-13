@@ -1,0 +1,1308 @@
+RemoteBox
+Version 1.8.1
+Open Source VirtualBox Client with Remote Management
+
+Documentation
+
+Table of Contents
+1 Introduction.................................................................................................................................4
+2 RemoteBox General Requirements...........................................................................................4
+3 RemoteBox Installation...............................................................................................................5
+3.1 Debian.................................................................................................................................5
+3.2 Fedora.................................................................................................................................5
+3.3 FreeBSD..............................................................................................................................6
+3.4 Mac OS X............................................................................................................................6
+3.5 Mageia.................................................................................................................................6
+3.6 Mint......................................................................................................................................7
+3.7 NetBSD................................................................................................................................7
+3.8 OpenSUSE..........................................................................................................................7
+3.9 Solaris / OpenSolaris / OpenIndiana...................................................................................7
+3.10 Ubuntu...............................................................................................................................8
+4 Configuring the Server................................................................................................................8
+4.1 Summary.............................................................................................................................8
+4.2 Linux Server Configuration..................................................................................................9
+4.2.1 Configuring the VirtualBox Web Service.................................................................................9
+4.2.2 Auto-Starting Guests on Host Boot.........................................................................................9
+4.2.3 SSL...................................................................................................................................... 10
+
+4.3 Windows Server Configuration..........................................................................................12
+4.3.1 Configuring the VirtualBox Web Service...............................................................................12
+4.3.2 Auto-Starting Guests on Host Boot.......................................................................................12
+
+4.4 Solaris Server Configuration.............................................................................................12
+4.4.1 Configuring the VirtualBox Web Service...............................................................................12
+4.4.2 Auto-Starting Guests on Host Boot.......................................................................................13
+
+4.5 Mac OS X Server Configuration........................................................................................14
+4.5.1 Configuring the VirtualBox Web Service...............................................................................14
+
+4.6 Disabling Web Service Authentication..............................................................................14
+5 Using RemoteBox.....................................................................................................................15
+5.1 RemoteBox Preferences...................................................................................................15
+5.1.1 Default Stop Action............................................................................................................... 15
+5.1.2 Enable Heartbeat.................................................................................................................. 15
+5.1.3 Automatically Add Guest Additions to VMM..........................................................................15
+5.1.4 RDP Client............................................................................................................................ 15
+5.1.5 RDP Ports for New Guests...................................................................................................16
+5.1.6 Open Guest's Display on Guest Start...................................................................................16
+5.1.7 Auto-Hint Resolution............................................................................................................. 16
+
+5.2 Connecting to Server.........................................................................................................16
+5.2.1 Username............................................................................................................................. 16
+5.2.2 Password.............................................................................................................................. 17
+
+5.3 The Main Window..............................................................................................................17
+5.4 Remote Display.................................................................................................................17
+5.4.1 Remote Display with Sound..................................................................................................17
+5.4.2 Remote Display with Clipboard Sharing...............................................................................17
+
+5.5 Creating New Guests........................................................................................................17
+5.6 Virtual Media Manager......................................................................................................17
+5.7 Installing Guest Additions..................................................................................................17
+5.8 Hot Plugging and Unplugging vCPUs...............................................................................18
+6 FAQ & Troubleshooting............................................................................................................19
+6.1.1 Does the client that RemoteBox runs on, need to be running the same operating system as
+the server that VirtualBox runs on?................................................................................................19
+6.1.2 Can I use RemoteBox to administer VirtualBox on the same physical machine?.................19
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+2
+
+6.1.3 Does RemoteBox run on Windows?.....................................................................................19
+6.1.4 Does RemoteBox run on my favourite flavour of 'UNIX'?......................................................19
+6.1.5 Does RemoteBox support Teleport?.....................................................................................19
+6.1.6 Does RemoteBox support importing and exporting Virtual Appliance images (e.g. OVF)?.. .19
+6.1.7 Does RemoteBox support iSCSI LUNs?...............................................................................19
+6.1.8 Can I convert a hard disk image to another format?.............................................................19
+6.1.9 Why is RemoteBox restricted to certain versions of VirtualBox?...........................................19
+6.1.10 Why are the mouse pointers are out of sync when using the Remote Display?..................20
+6.1.11 When I try to open the manual in RemoteBox, nothing is displayed...................................20
+6.1.12 I run an older version of VirtualBox, what version of RemoteBox do I need?......................20
+6.1.13 I have a version of GTK2 older than 2.24, can I still use RemoteBox?...............................20
+6.1.14 I get an error message similar to the following:...................................................................21
+6.1.15 I get an error message on the command line similar to the following “Incorrect parameter at
+<path>/SOAP/Lite.pm” line xxxx”. What can I do?..........................................................................21
+6.1.16 I'm using Perl v5.18 or newer and can't seem to be able to login, what's wrong?...............21
+6.1.17 What is the default port that the VirtualBox web service runs on?......................................21
+6.1.18 I repeatedly get disconnected from the server, what's wrong?............................................21
+6.1.19 When using rdesktop it gives me the following error:..........................................................22
+6.1.20 Sometimes the interface is slow, why?...............................................................................22
+6.1.21 Unable to take a screenshot of the guest, or set a screenshot as an icon..........................22
+
+7 Licence......................................................................................................................................22
+8 Disclaimer.................................................................................................................................22
+9 Contact......................................................................................................................................22
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+3
+
+1 Introduction
+VirtualBox is traditionally considered to be a virtualisation solution aimed at the desktop contrary to
+solutions such as KVM, Xen and VMWare ESX which are considered more server orientated. Whilst it is
+certainly possible to install VirtualBox on a server, it offers few remote management features beyond
+using the vboxmanage command line.
+RemoteBox aims to fill this gap by providing a graphical VirtualBox client which is able to communicate
+with and manage a VirtualBox server installation. RemoteBox achieves this by using the vboxwebsrv
+feature of VirtualBox which allows its API to be accessed using a protocol called SOAP, even across a
+network. RemoteBox is similar in look and feel to the native VirtualBox interface and allows you to
+perform most of the same tasks, including accessing the display of guests – completely remotely. In
+addition, because both VirtualBox and RemoteBox are supported on many platforms you can for
+example manage a VirtualBox instance running on a Windows server using the RemoteBox client
+installed on FreeBSD.
+
+2 RemoteBox General Requirements
+Operating system specific instructions are provided further in this document
+•
+
+Perl v5.10+ (older versions may work but no consideration is given)
+
+•
+
+GTK 2 (minimum required version is 2.24)
+
+•
+
+gtk2-perl (compiled against the same Perl and GTK 2 libraries)
+
+•
+
+SOAP::Lite perl module (complied against the same Perl)
+
+•
+
+An RDP client such as FreeRDP or rdesktop. Avoid rdesktop 1.8.0 and newer.
+
+•
+
+VirtualBox 4.3.x installed on the server
+
+•
+
+The Oracle Extension Pack should also be installed on the server. The pack may be obtained
+from http://www.virtualbox.org/wiki/Downloads Follow the instructions on that page to install them.
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+4
+
+3 RemoteBox Installation
+This section describes the installation of RemoteBox. You do not need VirtualBox to be installed on the
+same machine as RemoteBox. Once RemoteBox is installed, you should configure the VirtualBox server
+which is described later in this document. The general procedure for installing RemoteBox is as follows:
+1. Install the required dependency packages. Operating system specific instructions are described in
+following sections.
+2. Unpack the tarball archive as follows:
+For the bzip2 archive:
+tar -xvjf RemoteBox-1.8.tar.bz2
+
+For the gzip archive:
+tar -xvzf RemoteBox-1.8.tar.gz
+
+3. Change into the RemoteBox directory:
+cd RemoteBox-1.8
+
+4. Run RemoteBox from the command line as follows:
+./remotebox
+
+If RemoteBox does not launch, please consult the operating system specific instructions.
+
+3.1
+
+Debian
+
+Use your preferred package management tool to ensure the correct DEB packages are installed.
+RemoteBox requires as least one RDP client to be installed and FreeRDP is now the recommended
+client. For example:
+apt-get install libgtk2-perl libsoap-lite-perl freerdp-x11
+* If you wish to use rdesktop instead, replace the freerdp-x11 package with rdesktop
+
+3.2
+
+Fedora
+
+Fedora 19+ includes RemoteBox in it's official repositories which you may prefer instead of using the one
+downloaded from the RemoteBox website. To install this version, do the following as root:
+yum -y install RemoteBox
+
+Alternatively, use the your preferred package management tool to ensure the correct RPM packages are
+installed. RemoteBox requires as least one RDP client to be installed and FreeRDP is now the
+recommended client. For example:
+yum -y install perl-Gtk2 perl-SOAP-Lite freerdp
+* If you wish to use rdesktop instead, replace the freerdp package with rdesktop
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+5
+
+3.3
+
+FreeBSD
+
+FreeBSD has RemoteBox in it's official ports repository which you may prefer instead of using the one
+downloaded from the RemoteBox website. It can be installed using your favourite ports management tool
+and is located at net/remotebox.
+Alternatively, use your preferred package management tool to ensure the correct packages are installed.
+RemoteBox requires as least one RDP client to be installed and FreeRDP is now the recommended
+client. For example with pkg_add as root:
+pkg_add -r freerdp p5-Gtk2 p5-SOAP-Lite
+
+If you use the ports system and portmaster:
+portmaster net/freerdp x11-toolkits/p5-Gtk2 net/p5-SOAP-Lite
+* If installing freerdp from ports, ensure you build it with X11 and sound support. If p5-libwww is installed from ports (a p5SOAP-Lite dependency) it should be built with https support. If you wish to use rdesktop instead, replace the freerdp package
+with rdesktop
+
+3.4
+
+Mac OS X
+
+Mac OS X typically does not come with the vast majority of dependencies for running complex UNIX
+graphical apps, so usually a 3rd party repository system is required. MacPorts (http://www.macports.org)
+is known to provide everything you need to get RemoteBox up and running. Follow the instructions on
+the MacPorts web site to get it installed and configured. The rest of these instructions will assume
+MacPorts is correctly installed.
+You will also need to ensure that the X11 and XCode packages are installed on your Mac. If not, they
+can be found on your operating system DVD or downloaded for free from the Apple store.
+Install the required MacPorts as follows from the command line:
+sudo port install p5-gtk2 p5-soap-lite freerdp
+* If you wish to use rdesktop instead, replace the freerdp package with rdesktop
+
+Important: You will need to modify the very first line in the remotebox file so that it uses the MacPorts
+implementation of Perl. Open the file in a text editor and replace the first line as follows:
+#!/usr/bin/perl
+
+replace with
+#!/opt/local/bin/perl
+
+3.5
+
+Mageia
+
+Use your preferred package management tool to ensure the correct RPM packages are installed.
+RemoteBox requires as least one RDP client to be installed and FreeRDP is now the recommended
+client. For example:
+urpmi perl-Gtk2 perl-SOAP-Lite freerdp
+* If you wish to use rdesktop instead, replace the freerdp package with rdesktop
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+6
+
+3.6
+
+Mint
+
+Use your preferred package management tool to ensure the correct DEB packages are installed. For
+example, running apt-get:
+sudo apt-get install libgtk2-perl libsoap-lite-perl freerdp-x11
+* If you wish to use rdesktop instead, replace the freerdp-x11 package with rdesktop
+
+3.7
+
+NetBSD
+
+Use your preferred package management tool to ensure the correct packages are installed. RemoteBox
+requires as least one RDP client to be installed and although FreeRDP is now the recommended client,
+only rdesktop is available in the official NetBSD repositories. For example:
+pkgin install p5-gtk2 p5-SOAP-Lite p5-libwww rdesktop
+
+Important: You will need to modify the very first line in the remotebox file so that it uses NetBSD's
+implementation of Perl. Open the file in a text editor and replace the first line as follows:
+#!/usr/bin/perl
+
+replace with
+#!/usr/pkg/bin/perl
+
+3.8
+
+OpenSUSE
+
+Use your preferred package management tool to ensure the correct RPM packages are installed.
+RemoteBox requires as least one RDP client to be installed and FreeRDP is now the recommended
+client. For example:
+zypper install perl-Gtk2 perl-SOAP-Lite freerdp
+* If you wish to use rdesktop instead, replace the freerdp package with rdesktop
+
+3.9
+
+Solaris / OpenSolaris / OpenIndiana
+
+Before installing any dependencies, you must ensure you have the 'SUNWmlib' standard Solaris
+package installed. If your edition of Solaris is new enough, this can be installed directly through Package
+Manager, otherwise it should be available on your install DVDs.
+Solaris doesn't provide all of the required dependencies of out of the box, so it is recommended that you
+use the OpenCSW (http://www.opencsw.org) repository to supply those dependencies. It is quite trivial to
+set up, especially on recent editions of Solaris. As OpenCSW uses a separate tree for installing its
+packages, it does not interfere or conflict with the standard system files and packages. RemoteBox
+requires as least one RDP client to be installed and although FreeRDP is now the recommended client,
+only rdesktop is available in the official Solaris or OpenCSW repositories. Once OpenCSW is configured,
+please install the following packages as root using pkgutil, for example:
+/opt/csw/bin/pkgutil -U
+/opt/csw/bin/pkgutil -i pm_gtk2 pm_soap_lite rdesktop pm_glib pm_pango gdk_pixbuf
+
+Important: You will need to modify the very first line in the remotebox file so that it uses OpenCSW's
+implementation of Perl. Open the file in a text editor and replace the first line as follows:
+#!/usr/bin/perl
+
+replace with
+#!/opt/csw/bin/perl
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+7
+
+3.10
+
+Ubuntu
+
+Use your preferred package management tool to ensure the correct DEB packages are installed. For
+example, running apt-get:
+sudo apt-get install libgtk2-perl libsoap-lite-perl freerdp-x11
+* If you wish to use rdesktop instead, replace the freerdp-x11 package with rdesktop
+
+4 Configuring the Server
+Before attempting to install VirtualBox and configure the server, it's very important you read and
+understand this chapter, as missing even a simple step may prevent the server from working and will
+lead to frustration.
+
+4.1
+
+Summary
+
+VirtualBox should be installed on the server system and configured to allow RemoteBox to connect to it.
+VirtualBox provides a service called vboxwebsrv which requires some configuration and should be set to
+start on boot. It is this service that RemoteBox connects to, in order to manage VirtualBox and the
+associated guests.
+VirtualBox understands the concept of users and that different users may have their own VirtualBox
+configuration and guests. This is important to understand because the service vboxwebsrv must be
+configured to start as the user, whose VirtualBox configuration and guests you want to manage with
+RemoteBox. For example, if the service is started as the user joe, then when you connect with
+RemoteBox you will see Joe's guests. For a new setup, it is recommended you create a generic user
+called virtual and use that.
+When connecting with RemoteBox, you will need to provide some login credentials. These login
+credentials can be any valid user that exists on the server. It is also important to understand that these
+login credentials are used for authentication only and do not determine whose guests you will see. In
+other words, if the vboxwebsrv service is running as the user joe and RemoteBox connects as the user
+pete, it will still show Joe's guests.
+The Oracle Extension Pack should also be installed on the server and should be installed as the same
+user used to start vboxwebsrv. Instructions are available on the VirtualBox website if you are unsure how
+to install this pack. The extension pack provides features such as remote desktop display which
+RemoteBox requires in order to be fully functional.
+For the purposes of this documentation, we will assume the following settings, which you should adjust
+to match your server or needs.
+Vboxwebsrv user:
+
+virtual (The chosen user MUST be a member of the vboxusers or vboxuser group, this group is
+normally created when VirtualBox is installed)
+
+Server Name:
+
+myserver.example.com
+
+Server IP Address:
+
+192.168.1.10
+
+Default Port:
+
+18083
+
+Server Firewall:
+
+If running a server firewall, it must permit TCP connections on port
+18083
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+8
+
+4.2
+4.2.1
+
+Linux Server Configuration
+Configuring the VirtualBox Web Service
+
+Please read the section 4. Configuring the Server, before continuing. Unless stated otherwise, these
+steps should be performed as the root user on the server.
+●
+
+Edit or create the following configuration file using your preferred text editor
+/etc/default/virtualbox
+
+●
+
+Add the following contents to the text file, adjusting the parameters as appropriate for your server.
+You may also use the IP address instead of the hostname if so desired and particularly if your
+server does not resolve via DNS.
+VBOXWEB_USER="virtual"
+VBOXWEB_TIMEOUT=0
+VBOXWEB_LOGFILE="/var/log/vboxwebservice.log"
+VBOXWEB_HOST="myserver.example.com"
+
+●
+
+Initialise and set the ownership of the log file. If the log file is missing or has incorrect
+ownership, the web service will fail to start.
+touch /var/log/vboxwebservice.log
+chown virtual:vboxusers /var/log/vboxwebservice.log
+
+●
+
+Enable the service to automatically start on boot. This step varies between Linux distributions but
+for Fedora you would use:
+systemctl enable vboxweb-service
+
+●
+
+Either reboot your server or manually start the service. This step varies between Linux
+distributions but for Fedora you would use:
+systemctl start vboxweb-service
+
+●
+
+You can verify that the service is correctly running by entering this command.
+ps -aef | grep vboxwebsrv
+
+If the service fails to start, revisit the configuration steps to ensure nothing is missing or reboot the server
+to ensure all required services are started. Checking the contents of /var/log/vboxwebservice.log
+may provide you with additional information. You should now be able to connect to the server using
+RemoteBox on the client.
+
+4.2.2
+
+Auto-Starting Guests on Host Boot
+
+If you wish to use the feature which allows guests to automatically start or stop when the host system is
+booted or shutdown, some additional configuration is required on the server.
+First, create the permissions file. This file tells VirtualBox which users have permission to use the
+autostart feature. For this example, we will make the permissions very open but once it is working, you
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+9
+
+may want to tighten-up the permissions. Consult the VirtualBox documentation on how to tighten-up
+permissions.
+●
+
+Edit or create the following file using your favourite text editor
+/etc/default/vb-autostart-perms
+
+●
+
+Add the following contents to the file
+default_policy = allow
+
+●
+
+Set the correct file permissions
+chmod 0644 /etc/default/vb-autostart-perms
+chown virtual:vboxusers /etc/default/vb-autostart-perms
+
+●
+
+Create a directory which VirtualBox will use to hold it's autostart database
+mkdir -p /var/lib/virtualbox-autostart
+
+●
+
+Set the correct permissions on the directory
+chmod 1777 /var/lib/virtualbox-autostart
+chown virtual:vboxusers /var/lib/virtualbox-autostart
+
+●
+
+Next we need to tell vboxwebsrv about these files. Edit the following file
+/etc/default/virtualbox
+
+●
+
+Add the following contents to the file and save it
+VBOXAUTOSTART_DB="/var/lib/virtualbox-autostart"
+VBOXAUTOSTART_CONFIG="/etc/default/vb-autostart-perms"
+
+●
+
+Enable the autostart service to automatically start on boot. This step varies between Linux
+distributions but for Fedora you would use:
+●
+
+systemctl enable vboxautostart-service
+
+You will need to restart the VirtualBox web service and Autostart service or reboot the server. This has
+configured the server side to allow autostarting and autostopping of guests. Once you connect with
+RemoteBox, you will also need to set the VirtualBox autostart database location in the VirtualBox
+preferences section and it should be identical to what you set the server to use. From this point onwards
+you can configure guests in their settings to automatically start when the host boots.
+
+4.2.3
+
+SSL
+
+Before attempting to use SSL, it is highly recommended that you get the web service working
+without SSL first. Configuring the server to accept SSL connections is an optional feature to improve
+security. The connection is encrypted so that passwords are not sent in the clear across the network.
+Using SSL however is significantly slower because of the encryption overhead and you will notice an
+increase in lag with RemoteBox.
+The example which follows uses a self-signed certificate which should be sufficient for most people's
+needs.
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+10
+
+●
+
+Make a directory where you wish the certificates and server keys to be stored. In these
+examples, as we're running the web service as the user virtual, we will create a directory in that
+user's homespace.
+mkdir /home/virtual/vboxwebcerts
+
+●
+
+Generate the server's RSA private key for use with the web service. You will be prompted for a
+password for the key. Our example will assume mypassword as the password.
+cd /home/virtual/vboxwebcerts
+openssl genrsa -des3 -out vboxweb.key 1024
+
+●
+
+Generate the certificate signing request. You will be prompted for various X.509 attributes for the
+certificate. Most of them are purely informational, so fill them out as accurately as you see fit,
+however you should ensure that the 'Common Name' attribute is set to either the fully-qualified
+hostname of your server, or its IP address. You can the 'Challenge Password' empty unless you
+feel you need it.
+cd /home/virtual/vboxwebcerts
+openssl req -new -key vboxweb.key -out vboxweb.csr
+
+●
+
+Generate the self-signed certificate. This example will generate a certificate which is valid for 365
+days but you can set this value as you see fit. You will be prompted for the password you used to
+generate the key.
+cd /home/virtual/vboxwebcerts
+
+openssl x509 -req -days 365 -in vboxweb.csr -signkey vboxweb.key -out vboxweb.crt
+
+●
+
+The VirtualBox web service expects both the private key and the certificate to be in the same file.
+So combine them as follows:
+cd /home/virtual/vboxwebcerts
+cat vboxweb.key vboxweb.crt > vboxweb-both.crt
+
+●
+
+Create a text file using your preferred text editor and enter the password you chose and save the
+file at /home/virtual/vboxweb.pwd . This file should contain nothing but the password on the
+first line and will be use by the web service to unlock the private key.
+
+●
+
+Fix up the permissions so that the files are more secure and less prone to prying eyes.
+chown virtual:vboxusers /home/virtual/vboxwebcerts/*
+chmod 0600 /home/virtual/vboxwebcerts/*
+
+●
+
+Edit the web service configuration file located in /etc/default/virtualbox and add the
+following parameters:
+VBOXWEB_SSL_PASSWORDFILE="/home/virtual/vboxwebcerts/vboxweb.pwd"
+VBOXWEB_SSL_KEYFILE="/home/virtual/vboxwebcerts/vboxweb-both.crt"
+
+●
+
+Finally, restart the web service. On most distributions, this is done as follows:
+systemctl restart vboxweb-service
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+11
+
+When connecting to the server from RemoteBox, you should now prefix the URL with https://. Also
+note that non-SSL connections will not be available.
+
+4.3
+
+Windows Server Configuration
+
+4.3.1
+
+Configuring the VirtualBox Web Service
+
+Please read the section 4. Configuring the Server, before continuing. Unfortunately the VirtualBox web
+service does not integrate with Windows as a standard system service, unlike the other supported
+operating systems. You may be able to manually create a service by using the windows command called
+'sc'. Further information on using this command is available at http://support.microsoft.com/kb/251192
+Otherwise, it must be manually started each time the server is booted. Assuming you are using a specific
+user called virtual then log into the server as virtual and perform the following commands from the DOS
+or PowerShell.
+
+●
+
+Change to your VirtualBox installation directory. The default location is:
+cd “C:\Program Files\Oracle\VirtualBox”
+
+●
+
+Then run the VirtualBox web service
+vboxwebsrv -t0 -H myserver.example.com
+
+You can also use the IP address of your server instead of the hostname. You should now be able to
+connect to the server using the RemoteBox client.
+
+4.3.2
+
+Auto-Starting Guests on Host Boot
+
+Unfortunately VirtualBox does not support autostarting guests at boot on Windows.
+
+4.4
+
+Solaris Server Configuration
+
+4.4.1
+
+Configuring the VirtualBox Web Service
+
+Please read the section 4. Configuring the Server, before continuing. Unless stated otherwise, these
+steps should be performed as the root user.
+
+●
+
+Configure the web service to run as the user virtual.
+
+svccfg -s svc:/application/virtualbox/webservice:default setprop config/user=virtual
+
+●
+
+Add the timeout property to the web service.
+
+svccfg -s
+
+●
+
+svc:/application/virtualbox/webservice:default
+
+setprop config/timeout=integer: 0
+
+Add the log file property to the web service
+
+svccfg -s webservice:default setprop config/logfile=astring: /var/log/vboxwebservice.log
+
+●
+
+Set the hostname. The IP address may also be used instead.
+
+svccfg -s svc:/application/virtualbox/webservice:default setprop config/host=myserver.example.com
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+12
+
+●
+
+Tell SMF to commit the changes to the service
+svcadm refresh svc:/application/virtualbox/webservice:default
+
+●
+
+Initialise and set the ownership of the log file. If the log file is missing or incorrectly owned
+then the web service may not start
+touch /var/log/vboxwebservice.log
+chown virtual:vboxuser /var/log/vboxwebservice.log
+
+●
+
+Start the web service and enable it on boot
+svcadm enable svc:/application/virtualbox/webservice:default
+
+If the service fails to start, revisit the configuration steps to ensure nothing is missing. Checking the
+contents of /var/log/vboxwebservice.log or the output of svcs -x
+svc:/application/virtualbox/webservice:default may provide you with additional information.
+You should now be able to connect to the server using RemoteBox on the client.
+
+4.4.2
+
+Auto-Starting Guests on Host Boot
+
+If you wish to use the feature which allows guests to automatically start or stop when the host system is
+booted or shutdown, some additional configuration is required on the server.
+First, create the permissions file. This file tells VirtualBox which users have permission to use the
+autostart feature. For this example, we will make the permissions very open but once it is working, you
+may want to tighten-up the permissions. Consult the VirtualBox documentation on how to tighten-up
+permissions.
+●
+
+Edit or create the following file using your favourite text editor
+/etc/default/vb-autostart-perms
+
+●
+
+Add the following contents to the file
+default_policy = allow
+
+●
+
+Set the correct file permissions
+chmod 0644 /etc/default/vb-autostart-perms
+chown virtual:vboxuser /etc/default/vb-autostart-perms
+
+●
+
+Create a directory which VirtualBox will use to hold it's autostart database
+mkdir -p /var/lib/virtualbox-autostart
+
+●
+
+Set the correct permissions on the directory
+chmod 1777 /var/lib/virtualbox-autostart
+chown virtual:vboxuser /var/lib/virtualbox-autostart
+
+●
+
+Next we need to tell vboxwebsrv about these files. Edit the following file
+/etc/default/virtualbox
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+13
+
+●
+
+Add the following contents to the file and save it
+VBOXAUTOSTART_DB="/var/lib/virtualbox-autostart"
+VBOXAUTOSTART_CONFIG="/etc/default/vb-autostart-perms"
+
+●
+
+Configure the service as follows
+svccfg -s svc:/application/virtualbox/autostart:default setprop
+config/config=/etc/default/virtualbox
+
+●
+
+Enable the autostart service to automatically start on boot.
+svcadm enable svc:/application/virtualbox/autostart:default
+
+You will need to restart the VirtualBox web service and Autostart service or reboot the server. This has
+configured the server side to allow autostarting and autostopping of guests. Once you connect with
+RemoteBox, you will also need to set the VirtualBox autostart database location in the VirtualBox
+preferences section and it should be identical to what you set the server to use. From this point onwards
+you can configure guests in their settings to automatically start when the host boots.
+
+4.5
+4.5.1
+
+Mac OS X Server Configuration
+Configuring the VirtualBox Web Service
+
+Please read the section 4. Configuring the Server, before continuing. A standard plist file is included with
+VirtualBox which is usually located in:
+$HOME/Library/LaunchAgents/org.virtualbox.vboxwebsrv.plist
+
+Edit the file with a text editor and change the Disabled key from true to false. The service can then be
+started by typing:
+launchctl load ~/Library/LaunchAgents/org.virtualbox.vboxwebsrv.plist
+
+4.6
+
+Disabling Web Service Authentication
+
+Disabling authentication to the web service is not recommended because it will effectively allow anybody
+to access the virtual machines, however it may be useful for debugging purposes particularly if you are
+experiencing trouble logging in. To disable authentication, execute the following command on the server
+as the user that the web service runs as:
+vboxmanage setproperty websrvauthlibrary null
+* This command may be installed as 'VBoxManage' on some operating systems
+
+When connecting with RemoteBox simply leave the username and password options blank.
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+14
+
+5 Using RemoteBox
+This section describes some basic principles of using RemoteBox, with emphasis on where RemoteBox
+differs significantly from VirtualBox. This section does not go into great depth because using RemoteBox
+should be reasonably familiar to anybody that has used VirtualBox's native interface. RemoteBox makes
+heavy use of tool-tips to describe what the options are and do so you're highly encouraged to read them.
+RemoteBox is essentially a web client application. Almost everything you do with RemoteBox requires
+communicating with the server, over the network. If your network is poorly configured and unreliable then
+RemoteBox will not perform well either.
+
+5.1
+
+RemoteBox Preferences
+
+Accessible from the 'File->RemoteBox Preferences' menu. These preferences should not to be confused
+with the VirtualBox preferences as this dialog configures settings specifically for the RemoteBox client.
+
+5.1.1
+
+Default Stop Action
+
+This defines what action RemoteBox takes when the “Stop” button is pressed. Please note that whatever
+option you choose, all actions are still available in the sub-menu next to the “Stop” button. The options
+are described as follows:
+Instant Power Off: This is the default. Equivalent to removing the power from virtual machine. Use with
+care.
+ACPI Shutdown: An ACPI request is sent to the guest to power it off cleanly. Exact behaviour is guest
+operating system dependent.
+Save Guest State: Saves the execution state of the guest. This is approximately equivalent to
+“Hibernating” but does not require any operating system support.
+The safest way to shutdown a guest is from within the guest's operating system.
+
+5.1.2
+
+Enable Heartbeat
+
+If enabled, then RemoteBox will send a heartbeat to the VirtualBox web service every 60 seconds to
+monitor the connection status and keep the connection alive. Disabling this option is not
+recommended without fully understanding the consequences. The default is enabled.
+
+5.1.3
+
+Automatically Add Guest Additions to VMM
+
+If enabled, when RemoteBox connects to a server it will automatically add the guest additions ISO to the
+Virtual Media Manager so that it's available for attaching to guests. There should be little need to disable
+this option. The default is enabled.
+
+5.1.4
+
+RDP Client
+
+Configures the RDP client that RemoteBox should use when opening the display of a guest. By default,
+RemoteBox is configured to use FreeRDP (aka xfreerdp), however alternatives such as rdesktop may
+also be used. Please note, that rdesktop v1.8.0 and newer does not work correctly with VirtualBox.
+RemoteBox uses special variables which are substituted when the RDP client is launched and these
+should be used where your RDP client expects to see options such as the hostname or port number.
+The supported variables are:
+%h
+
+Will be substituted with the hostname of the VirtualBox server
+
+%n
+
+Will be substituted with the guest's name (useful for setting the xfreerdp window title)
+
+%o
+
+Will be substituted with the guest's operating system
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+15
+
+%p
+
+Will be substituted with the RDP port number
+
+%P
+
+Will be substituted with the user's password used to connect to VirtualBox
+
+%U
+
+Will be substituted with the username used to connect to VirtualBox
+
+%X
+
+Will be substituted with the Auto-Hint Resolution width
+
+%Y
+
+Will be substituted with the Auto-Hint Resolution height
+
+%D
+
+Will be substituted with the Auto-Hint Resolution depth
+
+The default value is:
+xfreerdp -g %Xx%Y --plugin cliprdr --plugin rdpsnd -T "%n - RemoteBox" %h:%p
+
+5.1.5
+
+RDP Ports for New Guests
+
+When RemoteBox creates a new guest, it automatically enables the RDP functionality for the guest and
+assigns a range of RDP ports for the guest to use. The reason why a range should be specified is
+because when each guest starts it must use a unique port number for its RDP service. If a port number
+is already in use by another process or guest, then VirtualBox will automatically assign the next available
+port in the range. If your server is running a firewall then these ports should be opened as appropriate.
+The default value is:
+3389-4389
+
+5.1.6
+
+Open Guest's Display on Guest Start
+
+If enabled, then RemoteBox will automatically open the display of the guest when you power on or
+resume a guest. If disabled then you will manually need to open the remote display by pressing the
+'Remote Display' button. The default is enabled.
+
+5.1.7
+
+Auto-Hint Resolution
+
+When a guest's display is opened, automatically send the requested display resolution hint. A display hint
+tries to keep the guest's display at the specified resolution. In addition, if you're RDP client command
+uses any of the %X, %Y or %D substitutions, the corresponding values will be inserted as parameters.
+
+5.2
+
+Connecting to Server
+
+In order to administer the virtual machines and guests, you should connect to the server running the
+VirtualBox web service. If you experience problems logging on, consider disabling authentication to the
+web server for testing purposes. Details on how to do this are described elsewhere in this document.
+Pressing the 'Connect' button will open a dialog window.
+The URL of the server to connect to is generally of the form http://<server>:<port>. If the port
+number is omitted it will assume the default of 18083. For example:
+http://myserver.home.lan:18083
+or
+http://192.168.1.5:18083
+
+5.2.1
+
+Username
+
+The username that the VirtualBox web service is running as. If you have authentication disabled, then
+you can leave it empty.
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+16
+
+5.2.2
+
+Password
+
+The password of the user that the VirtualBox web service is running as. If you have authentication
+disabled you can leave it empty.
+
+5.3
+
+The Main Window
+
+The main window should be familiar to users of VirtualBox. It's worth mentioning however that the status
+of the guests are not updated in real-time. To see changes in a guest's status which has occurred
+outside of RemoteBox (e.g. another process powered on a guest) you can use the 'Refresh' button.
+
+5.4
+
+Remote Display
+
+RemoteBox uses the RDP feature of VirtualBox to show the guest's display. To use this option, each
+guest should be configured with the RDP server enabled. If a guest was created through RemoteBox it
+will automatically have this feature enabled. Several aspects of how RDP is used can be configured in
+the RemoteBox preferences.
+
+5.4.1
+
+Remote Display with Sound
+
+Remote sound support is also possible and is enabled by default in RemoteBox with the FreeRDP client.
+In other words, when opening the remote display of a guest you can also hear its audio.
+For this to work, the guest must have audio support enabled in its settings and the guest operating
+system must also have support for the virtual sound card. When enabling audio support in the guest, it's
+recommended that you set the 'Host Audio Driver' to be 'Dummy Audio Driver', otherwise the guest will
+try to also output the sound through the server's own sound device, which is probably not what you want.
+
+5.4.2
+
+Remote Display with Clipboard Sharing
+
+Clipboard sharing (ie copy and paste with the guest and the client) is also possible and is enabled by
+default in RemoteBox with the FreeRDP client. For this to work fully, the guest must have 'Shared
+Clipboard' set to 'Bidirectional' in its settings. The guest must also have the Guest Additions installed and
+running.
+
+5.5
+
+Creating New Guests
+
+Creating guests is similar to VirtualBox except that RemoteBox will automatically enable the RDP server
+of the guest. This also allows the 'Remote Display' option to work in RemoteBox.
+
+5.6
+
+Virtual Media Manager
+
+All media is from the reference point of the server and not the RemoteBox client, so when adding
+additional media such as CD/DVD images, expect to see the file system layout of the server and not
+your client machine. This also means that any media images must be available from the server.
+
+5.7
+
+Installing Guest Additions
+
+RemoteBox will automatically add the VBoxGuestAdditions.iso to the Virtual Media Manager (VMM)
+when it connects to the server. To install the guest additions, just attach this ISO to the virtual CD/DVD
+drive of the guest as you would with any other ISO and install as normal.
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+17
+
+5.8
+
+Hot Plugging and Unplugging vCPUs
+
+RemoteBox has the ability to hot plug and unplug vCPUs from a guest, even while it is running. This
+should be considered an experimental feature. There are a number of pre-requisites which must be met
+in order for this to work correctly. They are listed as follows:
+•
+
+The guest must be using hardware virtualisation which is usually the default anyway.
+Edit Settings->System->Acceleration->Enable VT-x/AMD-V
+
+•
+
+The guest must have CPU hot plugging enabled.
+Edit Settings->System->Processor->Allow CPU Hot Plugging
+
+•
+
+Most operating systems will require I/O APIC to be enabled. Due to the limitations of Windows,
+this option should not be changed for a guest running Windows. Windows requires this option to
+be set, before installation. Other operating systems are not affected.
+Edit Settings->System->Motherboard->Enable IO APIC
+
+•
+
+Lastly, the guest operating system itself must support CPU hot plugging and/or hot unplugging.
+
+The exact process for hot plugging and unplugging a CPU is operating system dependant. Many
+versions of UNIX, including Linux support hot plugging and unplugging CPUs. Windows has very limited
+support for CPU hot plugging and no version of Windows supports CPU hot unplugging. You should
+consult the documentation for the guest operating system to find the exact procedure and its support
+status. A general set of guidelines follows.
+The general process for hot plugging a vCPU is:
+•
+
+Enable the vCPU in RemoteBox
+
+•
+
+At this point, some operating systems may automatically detect it and bring it online, others will
+require you to bring the CPU online manually.
+
+The general process for hot unplugging a vCPU is:
+•
+
+Disable or offline the vCPU in the guest first.
+
+•
+
+Disable the vCPU in RemoteBox
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+18
+
+6 FAQ & Troubleshooting
+When troubleshooting problems with RemoteBox, launching it from the command line may provide
+additional debugging information. Consulting the web service logs and the guest logs is also useful.
+
+6.1.1 Does the client that RemoteBox runs on, need to be running the same operating
+system as the server that VirtualBox runs on?
+No, the client machine can be running a different operating system to the server. For example, you can
+have RemoteBox installed on a Linux machine and connect to a VirtualBox server running Windows.
+
+6.1.2
+
+Can I use RemoteBox to administer VirtualBox on the same physical machine?
+
+Yes. Just ensure the VirtualBox web service is running on the same machine and by default connect to
+http://localhost:18083 with RemoteBox.
+
+6.1.3
+
+Does RemoteBox run on Windows?
+
+The short answer is no. I'm not aware of any Perl distribution for Windows that supports all of the
+modules required to run RemoteBox. If you do get RemoteBox to run on Windows, please let me know.
+You can however connect to a VirtualBox server running Windows.
+
+6.1.4
+
+Does RemoteBox run on my favourite flavour of 'UNIX'?
+
+It should be possible to get RemoteBox to run on any reasonably modern flavour of UNIX, or UNIX-like
+operating system. You may however need to manually compile and install the required dependencies
+yourself, rather than having them conveniently available in a repository.
+
+6.1.5
+
+Does RemoteBox support Teleport?
+
+No, not at this time. It is unlikely RemoteBox will ever support this feature.
+
+6.1.6 Does RemoteBox support importing and exporting Virtual Appliance images (e.g.
+OVF)?
+No, not at this time. There are plans to support this in the future, although VirtualBox currently seems
+very picky about what appliances it will and won't import.
+
+6.1.7
+
+Does RemoteBox support iSCSI LUNs?
+
+RemoteBox does not support connecting to iSCSI LUNs directly from its Virtual Media Manager.
+However you can use vboxmanage on the server to attach an iSCSI LUN, which will then be visible as
+hard disk in RemoteBox.
+
+6.1.8
+
+Can I convert a hard disk image to another format?
+
+Yes. Open the VMM and ensure the “Hard Disk” tab is select. Choose the hard disk to want to copy and
+convert. Select the “Copy & Convert” option and select the format you require. You will be prompted
+where you would like to save the new image. This operation will not alter the source image.
+
+6.1.9
+
+Why is RemoteBox restricted to certain versions of VirtualBox?
+
+VirtualBox versions are generally of the form Major.Minor.Micro (e.g. 4.2.1). VirtualBox only guarantees
+API compatibility between versions if it is the Micro suffix which has changed. For example 4.2.1 is
+compatible with 4.2.0, but 4.2.1 is not compatible with 4.1.0. To reduce code complexity RemoteBox only
+targets the latest version of the API at the time of release. It will warn you, if you use an incompatible
+version but you may experience problems if you choose to continue.
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+19
+
+6.1.10
+
+Why are the mouse pointers are out of sync when using the Remote Display?
+
+To enable mouse synchronisation, ideally Guest Additions should be installed and running within the
+guest opreating system. If this is not possible, then changing the mouse type to “USB Tablet” and
+ensuring USB support is enabled will work, providing the guest operating system supports USB and
+recognises USB Tablets correctly.
+
+6.1.11
+
+When I try to open the manual in RemoteBox, nothing is displayed...
+
+RemoteBox requires the xdg-open command which is part of the xdg-utils package. This package is
+usually installed by default on most distributions, however if it is not installed, please install it along with
+an appropriate PDF viewer.
+
+6.1.12
+
+I run an older version of VirtualBox, what version of RemoteBox do I need?
+
+Old versions of RemoteBox are downloadable from the website but should be considered unsupported,
+although user submitted bug fixes are welcome. See the table below for reference.
+
+6.1.13
+
+RemoteBox Version
+
+Required VirtualBox Version
+
+v1.6 and newer
+
+v4.3.x
+
+v1.4 - v1.5
+
+v4.2.x
+
+v1.0 - v1.3
+
+v4.1.x
+
+v0.6 - v0.9
+
+v4.0.x
+
+v0.1 - v0.5
+
+v3.2.x
+
+NONE
+
+v3.1.x and earlier editions
+
+I have a version of GTK2 older than 2.24, can I still use RemoteBox?
+
+Old versions of RemoteBox are downloadable from the website but should be considered unsupported,
+although user submitted bug fixes are welcome. See the table below for reference.
+
+RemoteBox Version
+
+Minimum GTK2 Version
+
+v1.6 and newer
+
+v2.24
+
+v1.2 - v1.5
+
+v2.22
+
+v0.1 – v1.1
+
+v2.16
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+20
+
+6.1.14
+
+I get an error message similar to the following:
+
+You do not have the Oracle Extension Pack installed or you have an old version of the pack installed.
+Please download and install the appropriate Oracle Extension Pack for your version of VirtualBox.
+
+6.1.15 I get an error message on the command line similar to the following “Incorrect
+parameter at <path>/SOAP/Lite.pm” line xxxx”. What can I do?
+This seems to be a bug in your particular perl-SOAP-Lite implementation. If possible upgrade your
+version of perl-SOAP-Lite or report a bug against perl-SOAP-Lite with your distribution maintainers. You
+can also work around this by editing the SOAP/Lite.pm file and changing the line from:
+die “Incorrect parameter” unless $itself =~/^\d$/;
+
+replace with
+die “Incorrect parameter” unless $itself =~/^\d*$/;
+
+(Note the addition of the asterisk *)
+
+6.1.16
+
+I'm using Perl v5.18 or newer and can't seem to be able to login, what's wrong?
+
+Changes in Perl v5.18 introduced an incompatibility with RemoteBox v1.7 and earlier which prevents
+logins from working correctly. The recommendation is to upgrade to RemoteBox v1.8 or newer.
+
+6.1.17
+
+What is the default port that the VirtualBox web service runs on?
+
+The VirtualBox web service runs on port 18083 unless configured otherwise
+
+6.1.18
+
+I repeatedly get disconnected from the server, what's wrong?
+
+Unless you have a particularly bad network, you probably either have a low timeout configured on the
+web service, or you have disabled the heartbeat in RemoteBox. Please ensure the heartbeat is enabled
+in RemoteBox (File->Preferences->Heartbeat). Ensure that the web service has timeouts disabled or is
+not configured lower than 60 seconds.
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+21
+
+6.1.19
+
+When using rdesktop it gives me the following error:
+Autoselected keyboard map en-us
+Failed to negotiate protocol, retrying with plain RDP.
+WARNING: Remote desktop changed from 800x600 to 1280x1024.
+X Error of failed request: BadWindow (invalid Window parameter)
+Major opcode of failed request: 18 (X_ChangeProperty)
+Resource id in failed request: 0x0
+Serial number of failed request: 38
+Current serial number in output stream: 43
+
+Rdesktop 1.8.0 and newer have severe problems when connecting to VirtualBox. Either downgrade
+Rdesktop to an earlier version or use the recommended FreeRDP client.
+
+6.1.20
+
+Sometimes the interface is slow, why?
+
+RemoteBox is completely dependent on the responsiveness of your network and VirtualBox. Almost
+every action in RemoteBox requires a transaction to the VirtualBox server. If the server's response is
+slow, then RemoteBox will be slow as a consequence.
+
+6.1.21
+
+Unable to take a screenshot of the guest, or set a screenshot as an icon.
+
+Increasing the amount of Video RAM assigned to the guest seems to resolve the issue. Otherwise it
+could be that your build of VirtualBox was built without PNG support.
+
+7 Licence
+RemoteBox itself, is published under the terms of the “GNU GENERAL PUBLIC LICENSE, v2” or any
+later version. The use of RemoteBox in whole or in part constitutes acceptance of these terms. For
+further information, please see http://www.gnu.org/licenses/gpl-2.0.html
+RemoteBox ships with icons which originate from the VirtualBox Open Source Edition, released under
+the GPL.
+
+8 Disclaimer
+For the full details, please see the “NO WARRANTY” section of the GPL. In short, you are entirely and
+wholly responsible for all consequences resulting from your use, or misuse of RemoteBox. This includes,
+but is not limited to, loss or damage to data, hardware, money and all consequences that arise as a
+result.
+RemoteBox is not affiliated with Oracle. All trademarks belong to their respective owners.
+
+9 Contact
+If you have any queries or bug reports regarding RemoteBox, please send an email to:
+packages [AT] amiga-hardware DOT com
+
+RemoteBox Version 1.8.1 © 2010-2014 Ian Chapman.
+
+22
+
+
