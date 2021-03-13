@@ -13,6 +13,12 @@ Tài liệu cho học devops
 - [USENIX Large Installation System Administration Conference 2015 Presentations - Free](http://usenix.org/conference/lisa15/conference-program)
 - [Linux Journey](https://linuxjourney.com/)
 
+### Golang
+- [Go for Javascript Developers](http://www.pazams.com/Go-for-Javascript-Developers/pages/concurrency-parallelism/#d-overview)
+
+### Vi and Vim - Text editors
+- [Interactive vim tutorial](https://www.openvim.com/)
+
 ### Docker
 - [Docker Self-Paced Training](http://training.docker.com/category/self-paced-online)
 
@@ -28,6 +34,9 @@ Tài liệu cho học devops
 
 ### Ansible
 - [Ansible Video Resources - Including AnsibleFest Convention Videos](https://www.ansible.com/videos)
+
+### Jenkins
+- [Jenkins Official Docs](https://www.jenkins.io/doc/)
 
 ### Other
 - [SaltStack Video Resources](https://www.youtube.com/user/SaltStack)
